@@ -1,19 +1,19 @@
-import os
-import sys
-caminho = os.path.join(os.getcwd(),'backend')
-sys.path.append(caminho)
-from asyncio import run
-from dotenv import load_dotenv
-from pyrogram import Client, filters
+from frontend.utils_f import *
+from frontend.service import all_configs, alter_config, ligar_desligar, banca
+from frontend.operations import *
+from backend.utils import calibrar_entrada
+from backend.backtest import backtest_maker
+from backend.senderbot import paridades
+from time import sleep
 from pyrogram.types import (InlineKeyboardButton, InlineKeyboardMarkup,
                             Message, ReplyKeyboardMarkup)
-from time import sleep
-from backend.senderbot import paridades
-from backend.backtest import backtest_maker
-from backend.utils import calibrar_entrada
-from frontend.operations import *
-from frontend.service import all_configs, alter_config, ligar_desligar, banca
-from frontend.utils_f import *
+from pyrogram import Client, filters
+from dotenv import load_dotenv
+from asyncio import run
+import os
+import sys
+caminho = os.path.join(os.getcwd(), 'backend')
+sys.path.append(caminho)
 
 load_dotenv()
 
@@ -62,7 +62,7 @@ def refresh_config():
          InlineKeyboardButton(f"FT MG: {obj_comp['fator_martingale']}", callback_data="fator_martingale_edit")],
         [InlineKeyboardButton(f"Corretora: {obj_comp['corretora']}", callback_data="corretora_edit"),
          InlineKeyboardButton(f"Qtd Ciclos: {obj_comp['qtd_ciclos']}", callback_data="qtd_ciclos_edit")],
-         [InlineKeyboardButton(
+        [InlineKeyboardButton(
             ciclo_view, callback_data="valor_por_ciclo_edit")],
         [InlineKeyboardButton(f"Vlr Entry: {obj_comp['pct_entrada']}", callback_data="pct_entrada_edit"),
          InlineKeyboardButton(f"SG: {float_to_percent(obj_comp['porcentagem_stop_win'])}", callback_data="porcentagem_stop_win_edit")],
@@ -80,6 +80,7 @@ def refresh_config():
 
 # Crie o aplicativo
 app = MyClient()
+
 
 @app.on_message(filters.command('start'))
 async def inicio(Client, message):
@@ -106,10 +107,12 @@ async def ligar(Client, message):
     interrupt = ligar_desligar()
     await app.send_message(message.chat.id, interrupt)
 
+
 @app.on_message(filters.regex("Calibrar"))
 async def ligar(Client, message):
     calibrar_entrada()
     await app.send_message(message.chat.id, "Entradas calibradas com sucesso!!")
+
 
 @app.on_message(filters.regex("Paridades"))
 async def painel(Client, message):
@@ -143,7 +146,7 @@ async def configurar(Client, message):
          InlineKeyboardButton(f"FT MG: {obj_comp['fator_martingale']}", callback_data="fator_martingale_edit")],
         [InlineKeyboardButton(f"Corretora: {obj_comp['corretora']}", callback_data="corretora_edit"),
          InlineKeyboardButton(f"Qtd Ciclos: {obj_comp['qtd_ciclos']}", callback_data="qtd_ciclos_edit")],
-         [InlineKeyboardButton(
+        [InlineKeyboardButton(
             ciclo_view, callback_data="valor_por_ciclo_edit")],
         [InlineKeyboardButton(f"Valor Ent: {obj_comp['pct_entrada']}", callback_data="pct_entrada_edit"),
          InlineKeyboardButton(f"SG: {float_to_percent(obj_comp['porcentagem_stop_win'])}", callback_data="porcentagem_stop_win_edit")],
@@ -220,7 +223,7 @@ async def callback(clinet, callback_query):
             await callback_query.message.reply(f"Insira o limite de candles a serem analisados:")
             registra_sess_data(app, callback_query.from_user.id,
                                "lmt_candles", "active_edit")
-            
+
         elif "qtd_ciclos" in callback_query.data:
 
             await callback_query.message.reply(f"Insira quantos ciclos deseja usar:")
@@ -303,26 +306,11 @@ async def callback(clinet, callback_query):
             reply_markup2 = InlineKeyboardMarkup([
                 [
                     InlineKeyboardButton(
-                        "End of Second", callback_data="end_of_second_est"),
-                    InlineKeyboardButton("tres cavaleiros", callback_data="tres_cavaleiros_est"),
-                    InlineKeyboardButton(
-                        "fibonacci", callback_data="fibonacci_est"),
+                        "paula", callback_data="paula_est"),
                 ], [
-                    InlineKeyboardButton(
-                        "anatrader", callback_data="anatrader_est"),
-                    InlineKeyboardButton(
-                        "cruzaMedia", callback_data="cruzaMedia_est"),
-                    InlineKeyboardButton(
-                        "crosstoca", callback_data="crosstoca_est"),
-                ], [
-                    InlineKeyboardButton(
-                        "Quatro Jump 2", callback_data="quatro_jump_2_est"),
-                    InlineKeyboardButton(
-                        "sequencia_cinco", callback_data="sequencia_cinco_est"),
                     InlineKeyboardButton(
                         "teste", callback_data="teste_est"),
                 ]
-
             ])
 
             await callback_query.message.reply_text("Escolha a estratégia que deseja usar para fazer suas entradas", reply_markup=reply_markup2)
@@ -410,7 +398,7 @@ async def callback(clinet, callback_query):
         estrat_back = callback_query.data.replace("_trat_back", "")
         registra_sess_data(app, callback_query.from_user.id,
                            estrat_back, "trat_back")
-        
+
         reply_markup1 = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
@@ -426,26 +414,25 @@ async def callback(clinet, callback_query):
         ])
         sent_message = await callback_query.message.reply_text(
             "Escolha o timeframe para o Backtest:", reply_markup=reply_markup1)
-        
+
     elif "_timeframe_back" in callback_query.data:
         timeframe_back = callback_query.data.replace("_timeframe_back", "")
         registra_sess_data(app, callback_query.from_user.id,
                            timeframe_back, "timeframe_back")
         await callback_query.message.reply(f"Informe o limite de ciclos de candle para a estrategia")
         registra_sess_data(app, callback_query.from_user.id,
-                               "lmt_candle", "active_edit")
-
+                           "lmt_candle", "active_edit")
 
     elif "_persontime_back" in callback_query.data:
         persontime = callback_query.data.replace("_persontime_back", "")
         print("persontime: ", persontime)
         if persontime == "sim":
             registra_sess_data(app, callback_query.from_user.id,
-                        "personsdatas", "active_edit")
+                               "personsdatas", "active_edit")
             await callback_query.message.reply(f"Digite a data/hora inicial e final no formato dd/mm/aaaa;hh:mm, sendo a separação entre elas o - (hífen)")
-        
+
         else:
-            
+
             reply_markup15 = InlineKeyboardMarkup([
                 [
                     InlineKeyboardButton(
@@ -467,7 +454,6 @@ async def callback(clinet, callback_query):
             await callback_query.message.reply_text(
                 "Escolha o período do Backtest:", reply_markup=reply_markup15)
 
-
     elif "_time_back" in callback_query.data:
         time_back = callback_query.data.replace("_time_back", "")
         registra_sess_data(app, callback_query.from_user.id,
@@ -476,15 +462,10 @@ async def callback(clinet, callback_query):
         reply_markup1 = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
-                    "sequencia cinco", callback_data="sequencia_cinco_trat_back"),
+                    "paula", callback_data="paula_est"),
+            ], [
                 InlineKeyboardButton(
-                    "Quatro Jump 2", callback_data="quatro_jump_2_trat_back")
-            ],
-            [
-                InlineKeyboardButton(
-                    "Tres Cavaleiros", callback_data="tres_cavaleiros_trat_back"),
-                InlineKeyboardButton(
-                    "End of Second", callback_data="end_of_second_trat_back")
+                    "teste", callback_data="teste_est"),
             ]
 
         ])
@@ -570,23 +551,19 @@ async def messages(Client, message):
             await app.send_message(message.chat.id, "Valor inválido, tente novamente!")
 
     elif general_session['active_edit'] == "personsdatas":
-        registra_sess_data(app, message.from_user.id, message.text, "personsdatas")
+        registra_sess_data(app, message.from_user.id,
+                           message.text, "personsdatas")
         reply_markup21 = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
-                    "sequencia cinco", callback_data="sequencia_cinco_trat_back"),
+                    "paula", callback_data="paula_est"),
+            ], [
                 InlineKeyboardButton(
-                    "Quatro jump 2", callback_data="quatro_jump_2_trat_back"),
-                InlineKeyboardButton(
-                    "Tres Cavaleiros", callback_data="tres_cavaleiros_trat_back"),
-                InlineKeyboardButton(
-                    "End of Second Cavaleiros", callback_data="end_of_second_trat_back"),
+                    "teste", callback_data="teste_est"),
             ]
-
         ])
         sent_message = await message.reply_text(
             "Escolha a estratégia para o Backtest:", reply_markup=reply_markup21)
-        
 
     elif general_session['active_edit'] == "lmt_candles":
         if message.text.isnumeric():
@@ -626,7 +603,7 @@ async def messages(Client, message):
                                "", "active_edit")
         else:
             await app.send_message(message.chat.id, "Valor inválido, tente novamente!")
-            
+
     elif general_session['active_edit'] == "qtd_ciclos":
         if is_numeric_point(message.text):
             alter_config("qtd_ciclos", float(message.text))
@@ -646,7 +623,7 @@ async def messages(Client, message):
                                "", "active_edit")
         else:
             await app.send_message(message.chat.id, "Valor inválido, tente novamente!")
-   
+
     elif general_session['active_edit'] == "valor_por_ciclo":
         ciclo_formatado = formatCiclo(message.text)
         if ciclo_formatado:
@@ -736,7 +713,6 @@ async def messages(Client, message):
             registra_sess_data(app, message.from_user.id,
                                "", "active_edit")
 
-
     elif general_session['active_edit'] == "coin_backtest":
 
         registra_sess_data(app, message.from_user.id,
@@ -753,7 +729,7 @@ async def messages(Client, message):
                     "Sim", callback_data="sim_persontime_back"),
                 InlineKeyboardButton(
                     "Não", callback_data="nao_persontime_back"),
-                
+
             ]
 
         ])
@@ -770,7 +746,7 @@ async def messages(Client, message):
         if "time_back" not in usuario_dados:
             registra_sess_data(app, message.from_user.id,
                                0, "time_back")
-            
+
         # Verifica se existe a chave personsdatas no dicionario, se não houver atribui o valor None
         if "personsdatas" not in usuario_dados:
             registra_sess_data(app, message.from_user.id,
@@ -782,12 +758,13 @@ async def messages(Client, message):
         lmt = usuario_dados['lmt_candle']
         personsdatas = usuario_dados['personsdatas']
         await app.send_message(message.chat.id, "Processando informações. Aguarde...")
-        result = backtest_maker(coin, timeframe_back, period, strateg, lmt, obj_comp['banca'], personsdatas)
+        result = backtest_maker(
+            coin, timeframe_back, period, strateg, lmt, obj_comp['banca'], personsdatas)
         for i in result:
             await app.send_message(message.chat.id, i)
         registra_sess_data(app, message.from_user.id,
                            "", "active_edit")
-        
+
     elif general_session['active_edit'] == "pares_favoritos":
         pares_l = split_pairs(message.text)
         if pares_l:
@@ -811,7 +788,7 @@ async def messages(Client, message):
 
     elif message.from_user.id == bot_user_id:
         return  # Ignorar a mensagem.
-    
+
     else:
         await app.send_message(message.chat.id, "Olá, eu sou o BeRichBot, o bot do BeRich. Como posso te ajudar?")
 

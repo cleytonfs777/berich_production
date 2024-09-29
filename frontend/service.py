@@ -1,3 +1,4 @@
+from backend.handler import *
 import json
 import os
 from dotenv import load_dotenv
@@ -5,12 +6,10 @@ from iqoptionapi.stable_api import IQ_Option
 import sys
 current_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(current_dir)
-from backend.handler import *
 
 load_dotenv()
 
 # Encontre o caminho do diretório atual
-
 
 
 # Construa o caminho do arquivo db.json
@@ -19,7 +18,7 @@ db_path = os.path.join(current_dir, '..', 'backend', 'database.json')
 
 def banca():
 
-    API = IQ_Option(os.getenv('EMAIL_IQPTION'),os.getenv('PASSWORD_IQPTION'))
+    API = IQ_Option(os.getenv('EMAIL_IQPTION'), os.getenv('PASSWORD_IQPTION'))
     API.connect()
     typeacount = get_one_data("tipo_conta")
     API.change_balance(typeacount)  # PRACTICE / REAL
@@ -35,34 +34,16 @@ def banca():
     return round(API.get_balance(), 2)
 
 
-def banca_min():
+def banca_min(fator=2.5, ciclos=6):
+    ciclos = int(ciclos)
+    # A soma da série geométrica considerando que a primeira entrada é 1
+    soma_serie = sum(fator ** i for i in range(ciclos))
 
-    lista = [[1, 2.5], [6.25, 15.62], [39.05, 97.62]]
+    # A banca mínima será o valor da soma da série geométrica
+    banca_min = round(soma_serie, 2)
 
+    return banca_min
 
-    print(lista)
-    # Contar o total de elementos em todas as listas
-    num_elementos = sum(len(sublista) for sublista in lista)
-
-    print("Número de elementos:", num_elementos)
-    
-    # Definir o fator
-    fator = float(get_one_data('fator_martingale'))
-    
-    # Calcular o valor total
-    init = 0
-    total = 0
-    for _ in range(num_elementos):
-        if init == 0:
-            init = 1
-            total += init
-        else:
-            init = round(init * fator, 2)       
-            total += init
-            total = round(total, 2)
-        print("Valor de init:", init)
-        print("Valor de total:", total)
-    return total
 
 def atualiza_banca():
     atual = banca()
@@ -77,17 +58,17 @@ def ajuste_entrada(banca, ciclos=6, fator=2.5):
 
     # Calcular a soma da série geométrica
     soma_serie = sum([fator ** i for i in range(ciclos)])
-    
+
     # Calcular a primeira parte da banca
     primeira_parte = round(banca / soma_serie, 2)
-    
+
     # Inicializar a lista de partes da banca
     partes_banca = [primeira_parte]
-    
+
     # Calcular as partes restantes da banca
     for i in range(1, ciclos):
         partes_banca.append(round(partes_banca[-1] * fator, 2))
-    
+
     # Verificar se a soma das partes é igual à banca
     # Se não for, ajustar a última parte
     soma_partes = sum(partes_banca)
@@ -123,9 +104,9 @@ def entrada_min():
     total_banca = initial
     print(f"Entrada: {initial}")
     print(f"Total: {total_banca}")
-    for i in range(1,ciclos):
-        total_banca += round(initial * fator,2)
-        initial = round(initial * fator,2)
+    for i in range(1, ciclos):
+        total_banca += round(initial * fator, 2)
+        initial = round(initial * fator, 2)
         print(f"Entrada: {initial}")
         print(f"Total: {total_banca}")
     return round(total_banca, 2)
@@ -137,12 +118,13 @@ def agrupar_pares(lista):
         lista_pares.append([lista[i], lista[i + 1]])
 
     if len(lista) % 2 != 0:  # Se a lista tem um número ímpar de elementos
-        lista_pares.append([lista[-1]])  # Adiciona o último elemento como uma lista de um único elemento
-        
+        # Adiciona o último elemento como uma lista de um único elemento
+        lista_pares.append([lista[-1]])
+
     return lista_pares
 
 
-def calibrar_entrada()-> str:
+def calibrar_entrada() -> str:
 
     # Recupera o valor da chave "valor_por_ciclo"
     valor_por_ciclo = get_one_data('valor_por_ciclo')
@@ -157,7 +139,7 @@ def calibrar_entrada()-> str:
     if int(ciclos[0]) < 1:
 
         return f"Para que seja possivel realizar {ciclos} ciclos é necessario ter no minimo banca de U$ {entrada_min(ciclos)}"
-    
+
     lista_fim = agrupar_pares(ciclos)
 
     # Alterando o valor

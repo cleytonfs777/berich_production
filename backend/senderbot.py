@@ -6,7 +6,7 @@ from time import sleep
 from dotenv import load_dotenv
 from iqoptionapi.stable_api import IQ_Option
 from pyrogram import Client
-from handler import get_one_data
+from backend.handler import get_one_data
 
 load_dotenv()  # take environment variables from .env.
 
@@ -32,7 +32,8 @@ def mensagem(msg):
 
 def paridades():
 
-    API = IQ_Option(os.environ['EMAIL_IQPTION'], os.environ['PASSWORD_IQPTION'])
+    API = IQ_Option(os.environ['EMAIL_IQPTION'],
+                    os.environ['PASSWORD_IQPTION'])
     API.connect()
     typeacount = get_one_data("tipo_conta")
     API.change_balance(typeacount)  # PRACTICE / REAL

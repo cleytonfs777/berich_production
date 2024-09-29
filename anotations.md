@@ -6,3 +6,4 @@ message.chat.id
 
 #TODO:
 - Analisar as estratégias que não podem ter timeframes alterados
+

@@ -17,7 +17,6 @@ def get_one_data(chave):
     # Imprimindo os dados
     return data[chave]
 
-
 def all_configs():
     # Lendo o arquivo JSON
     with open(db_path_main) as json_file:
@@ -25,7 +24,6 @@ def all_configs():
 
     # Imprimindo os dados
     return data
-
 
 def alter_config(chave, valor):
     # Lendo o arquivo JSON
@@ -45,7 +43,6 @@ def alter_config(chave, valor):
 
     return data
 
-
 def is_enabled():
     # Lendo o arquivo JSON
     with open(db_path_main) as json_file:
@@ -57,7 +54,6 @@ def is_enabled():
     else:
         return False
 
-
 def is_changed():
     # Lendo o arquivo JSON
     with open(db_path_main) as json_file:
@@ -65,7 +61,6 @@ def is_changed():
 
     # Verifica se o bot está habilitado ou não
     return data['changed']
-
 
 def changed_on():
     # Lendo o arquivo JSON
@@ -80,7 +75,6 @@ def changed_on():
 
     return data
 
-
 def changed_off():
     # Lendo o arquivo JSON
     with open(db_path_main) as json_file:
@@ -93,7 +87,6 @@ def changed_off():
         json.dump(data, json_file, ensure_ascii=False, indent=4)
 
     return data
-
 
 def scale_one_step():
     # Confere ind_main e ind_sec
@@ -122,13 +115,11 @@ def scale_one_step():
     alter_config("stage_ciclo", [x, y])
     return False
 
-
 def clear_all_steps(lc):
     # Reseta o ciclo para o nivel (0, 0)
     alter_config("stage_ciclo", [0, 0])
     lc.pos_atual_x = 0
     lc.pos_atual_y = 0
-
 
 def change_special(boolvalue, chave):
     # Lendo o arquivo JSON
@@ -144,6 +135,43 @@ def change_special(boolvalue, chave):
 
     return data
 
+##### HANDLER ANA TRADER
+
+db_ana_database = os.path.join(current_dir, 'ana_database.json')
+
+def get_one_ana(chave):
+    # Lendo o arquivo JSON
+    with open(db_ana_database) as json_file:
+        data = json.load(json_file)
+
+    # Imprimindo os dados
+    return data[chave]
+
+def all_ana_configs():
+    # Lendo o arquivo JSON
+    with open(db_ana_database) as json_file:
+        data = json.load(json_file)
+
+    # Imprimindo os dados
+    return data
+
+def alter_ana_config(chave, valor):
+    # Lendo o arquivo JSON
+    with open(db_ana_database) as json_file:
+        data = json.load(json_file)
+
+    # Verifica se a chave informada existe
+    if chave not in data:
+        return False
+
+    # Alterando o valor
+    data[chave] = valor
+
+    # Escrevendo no arquivo JSON
+    with open(db_ana_database, 'w') as json_file:
+        json.dump(data, json_file, ensure_ascii=False, indent=4)
+
+    return data
 if __name__ == '__main__':
     while True:
         result = scale_one_step()
