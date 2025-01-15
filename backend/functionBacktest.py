@@ -34,9 +34,12 @@ def back_bollinger_bands(candles_all, banca):
 
         while count_mtg <= qtd_mtg:
             entrada = retorna_valor(lc, entradas)
-            proximo_candle_open = candles_all['open'][j + 2]
-            proximo_candle_close = candles_all['close'][j + 2]
-            proximo_candle_time = candles_all['time'][j + 2]
+            try:
+                proximo_candle_open = candles_all['open'][j + 2]
+                proximo_candle_close = candles_all['close'][j + 2]
+                proximo_candle_time = candles_all['time'][j + 2]
+            except IndexError:
+                return
 
             # Verifica o resultado da operação com base no tipo (CALL ou PUT)
             if (tipo_operacao == 'CALL' and proximo_candle_close > proximo_candle_open) or \

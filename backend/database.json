@@ -1,45 +1,45 @@
 {
     "status": "on",
     "tipo_entrada": "ciclo",
-    "qtd_martingale": 1,
-    "fator_martingale": 2.5,
+    "qtd_martingale": 0,
+    "fator_martingale": 2.2,
     "qtd_ciclos": 5.0,
     "valor_por_ciclo": [
         [
             1.03,
-            2.58
+            2.27
         ],
         [
-            6.45,
-            16.12
+            4.99,
+            10.98
         ],
         [
-            39.98
+            24.26
         ]
     ],
     "corretora": "iqoption",
     "pct_entrada": 1.7,
-    "porcentagem_stop_win": 0.2,
+    "porcentagem_stop_win": 0.15,
     "porcentagem_stop_loss": 0.9,
     "pares_favoritos": [
-        "EURUSD-OTC"
+        "EURGBP-op"
     ],
     "timeframe": "1m",
-    "estrategia_principal": "paula",
+    "estrategia_principal": "teste",
     "tipo_conta": "PRACTICE",
     "typecoin": "digital",
-    "banca": 66.16,
+    "banca": 43.53,
     "lucprej": 0.0,
     "opaberto": 0,
     "autociclo": "off",
     "lmt_candles": 4,
     "changed": false,
     "target": "status",
-    "valor_entry": 16.12,
-    "luc_prej": -26.18,
+    "valor_entry": 1.03,
+    "luc_prej": 0,
     "stage_ciclo": [
-        1,
-        1
+        0,
+        0
     ],
     "firstis": true
 }

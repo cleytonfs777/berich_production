@@ -5,6 +5,7 @@ try:
         os.path.dirname(os.path.abspath(__file__))))
 except ModuleNotFoundError:
     ...
+import random
 from threading import Thread
 from messeger import enviar_mensagem_telegram
 from colorama import Fore, init
@@ -70,6 +71,8 @@ def mainbot():
             else:
                 return False
 
+    def random_call_put():
+        return random.choice([(True, 'call'), (True, 'put')])
     ##########################################################################################
 
     API = IQ_Option(os.getenv('EMAIL_IQPTION'), os.getenv('PASSWORD_IQPTION'))
@@ -177,7 +180,7 @@ def mainbot():
 
                 if permited_time("general_permissions"):
                     print("É tempo permitido *****")
-                    entrar, direction = (True, 'call')
+                    entrar, direction = random_call_put()
 
             elif configs['estrategia_principal'] == 'ana_trader':
                 if ana_dict["firstis"] or is_ana_time_permited():
@@ -197,6 +200,7 @@ def mainbot():
                     'pares_favoritos')[0], direction, normalize_timeframe(configs['timeframe']), get_one_data('tipo_entrada'), get_one_data('typecoin'), itr)
                 # Verifica se não bateu o Stop Gain
                 if get_one_data('luc_prej') >= value_stop_gain:
+                    calibrar_entrada(API)
                     enviar_mensagem_em_thread(
                         f"🤑 Você bateu o Stop Gain de {value_stop_gain} e o bot foi desligado 🤑")
                     alter_config("status", "off")

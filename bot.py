@@ -306,10 +306,10 @@ async def callback(clinet, callback_query):
             reply_markup2 = InlineKeyboardMarkup([
                 [
                     InlineKeyboardButton(
-                        "paula", callback_data="paula_est"),
+                        "paula", callback_data="paula_trat_princ"),
                 ], [
                     InlineKeyboardButton(
-                        "teste", callback_data="teste_est"),
+                        "teste", callback_data="teste_trat_princ"),
                 ]
             ])
 
@@ -364,6 +364,18 @@ async def callback(clinet, callback_query):
             message_id=sent_messages['message_id'],
             reply_markup=refresh_config()
         )
+    elif "_trat_princ" in callback_query.data:
+
+        estrategia_principal = callback_query.data.replace("_trat_princ", "")
+
+        alter_config("estrategia_principal", estrategia_principal)
+
+        await app.delete_messages(callback_query.message.chat.id, callback_query.message.id)
+        await app.edit_message_reply_markup(
+            chat_id=callback_query.message.chat.id,
+            message_id=sent_messages['message_id'],
+            reply_markup=refresh_config()
+        )
 
     elif "corr_" in callback_query.data:
         if "iqoption" in callback_query.data:
@@ -395,7 +407,9 @@ async def callback(clinet, callback_query):
 
     # Estratégias
     elif "_trat_back" in callback_query.data:
+        print("Foi encontrado o _trat_back")
         estrat_back = callback_query.data.replace("_trat_back", "")
+        print(f"Olha o resultado: {estrat_back}")
         registra_sess_data(app, callback_query.from_user.id,
                            estrat_back, "trat_back")
 
@@ -462,10 +476,10 @@ async def callback(clinet, callback_query):
         reply_markup1 = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
-                    "paula", callback_data="paula_est"),
+                    "paula", callback_data="paula_trat_back"),
             ], [
                 InlineKeyboardButton(
-                    "teste", callback_data="teste_est"),
+                    "teste", callback_data="teste_trat_back"),
             ]
 
         ])
@@ -477,7 +491,7 @@ async def callback(clinet, callback_query):
         estrat = callback_query.data.replace("_est", "")
         alter_config("estrategia_principal", estrat)
 
-        await app.delete_messages(callback_query.message.chat.id, callback_query.message.id)
+        # await app.delete_messages(callback_query.message.chat.id, callback_query.message.id)
         await app.edit_message_reply_markup(
             chat_id=callback_query.message.chat.id,
             message_id=sent_messages['message_id'],
@@ -556,10 +570,10 @@ async def messages(Client, message):
         reply_markup21 = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton(
-                    "paula", callback_data="paula_est"),
+                    "paula", callback_data="paula_trat_back"),
             ], [
                 InlineKeyboardButton(
-                    "teste", callback_data="teste_est"),
+                    "teste", callback_data="teste_trat_back"),
             ]
         ])
         sent_message = await message.reply_text(

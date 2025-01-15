@@ -173,13 +173,14 @@ def normalize_entry(timeframe, period):
         period_value *= 1440
 
     period_f = period_value/timeframe_value
+    period_f = round(period_f)
 
     print(f"Meu timeframe filtrado: {timeframe_value}")
     print(f"Meus periodos filtrado: {period_f}")
 
     result = []
     result.append(timeframe_value)
-    result.append(round(period_f))
+    result.append(period_f)
 
     return result
 

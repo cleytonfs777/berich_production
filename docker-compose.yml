@@ -10,13 +10,13 @@ services:
       - .:/app
     working_dir: /app
 
-  # backend:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   command: python index.py
-  #   volumes:
-  #     - ./backend:/app
-  #   working_dir: /app
-  #   env_file:
-  #     - ./backend/.env
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python index.py
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    env_file:
+      - ./backend/.env

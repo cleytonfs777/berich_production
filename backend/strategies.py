@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from backend.handler import *
 from iqoptionapi.stable_api import IQ_Option
 from backend.senderbot import mensagem
-from backend.utils import check_colors, normalize_timeframe, calibrar_entrada, myround, ListaControladora, min_time_ana
+from backend.utils import normalize_timeframe, calibrar_entrada, myround, ListaControladora, min_time_ana
 from datetime import datetime
 from messeger import enviar_mensagem_telegram
 from threading import Thread
@@ -438,7 +438,6 @@ def operation_start(API, par_n, dir_n, durt, tipo_entrada, typecoin, lc):
                       f"Banca atual: {banca(API)} | Lucro/Prejuízo: {get_one_data('luc_prej')} | Valor de entrada: {get_one_data('valor_entry')}")
                 enviar_mensagem_em_thread(f"🟢 Operação ganha no par {par_n} com direção {dir_n} | Martingale nº {mtg}🟢",
                                           f"Banca atual: {banca(API)} | Lucro/Prejuízo: {get_one_data('luc_prej')} | Valor de entrada: {get_one_data('valor_entry')}")
-                calibrar_entrada(API)
                 break
             else:
                 print(f"⚪ Operação empatada no par {par_n} com direção {dir_n} | Martingale nº {mtg} ⚪",
